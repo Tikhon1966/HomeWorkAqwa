@@ -1,0 +1,47 @@
+image: Ubuntu  # образ для сборки
+
+stack: jdk 11  # версия JDK
+
+branches:
+  only:
+    - master  # ветка git
+
+build: off  # будем использовать свой скрипт сборки
+
+install:
+  # запускаем SUT (& означает, что в фоновом режиме не блокируем терминал для запуска тестов)
+  - java -jar ./artifacts/app-mbank.jar &
+  - chmod +x gradlew
+
+build_script:
+  - ./gradlew test --info  # запускаем тест, флаг --info позволяет выводить больше информации
+Естественно, у вас должен возникнуть вопрос, а что будет, если SUT не успеет стартовать к моменту запуска автотестов?
+
+Тогда ваши тесты упадут. Что с этим делать и как классифицировать подобные случаи, мы поговорим на следующих лекциях.
+
+Напоминаем, ваш build.gradle должен выглядеть вот так:
+
+plugins {
+    id 'java'
+}
+
+group 'ru.netology'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 11
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'io.rest-assured:rest-assured:4.3.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.1'
+    testImplementation 'io.rest-assured:json-schema-validator:4.3.1'
+}
+
+test {
+    useJUnitPlatform()
+}
