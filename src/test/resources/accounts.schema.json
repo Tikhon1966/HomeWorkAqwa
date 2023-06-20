@@ -28,7 +28,7 @@
       },
       "currency": {
         "type": "string",
-        "value": "RUR"
+        "enum": ["RUR", "USD"]
       }
     }
   }
